@@ -1,0 +1,20 @@
+{
+  "$comment": "Where Toollpad is and what it charges. Copied from that repository rather than compiled from its source here — see README. The page reads the live rate off the chain, which is the check this file cannot be.",
+  "name": "Toollpad",
+  "repo": "https://github.com/Zmilhakim/toollpad",
+  "copiedFrom": "1de48597aacad05584085e6bcb0ccc1612ab41e0",
+  "chainId": 4663,
+  "chainName": "Robinhood Chain",
+  "poolManager": "0x8366a39CC670B4001A1121B8F6A443A643e40951",
+  "rates": {
+    "tollBps": 400,
+    "creatorBps": 8000,
+    "lpFee": 0,
+    "supply": "1000000000"
+  },
+  "deployed": {
+    "factory": "",
+    "hook": "",
+    "locker": ""
+  }
+}

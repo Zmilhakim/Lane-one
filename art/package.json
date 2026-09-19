@@ -1,0 +1,13 @@
+{
+  "name": "lane-one-art",
+  "private": true,
+  "type": "module",
+  "description": "Draws the Lane One mark and renders the avatar, banner and link preview",
+  "scripts": {
+    "render": "node render.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1",
+    "sharp": "^0.34.5"
+  }
+}
