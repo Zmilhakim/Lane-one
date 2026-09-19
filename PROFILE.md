@@ -100,11 +100,16 @@ Lajur pertama lewat palang. Supply semua masuk pool, likuiditas dikunci, toll 4%
 
 ## Website
 
-Halamannya sendiri, begitu situsnya ter-deploy:
+Halamannya sendiri, sudah live:
 
 ```
-https://toollpad.fun/t/lane-one
+https://lane-one-pi.vercel.app
 ```
+
+Itu juga yang jadi `imageURI` dan `link` di `token.json` — dua nilai yang ikut
+masuk on-chain di notice dan tidak bisa diedit sesudahnya, jadi keduanya harus
+menunjuk ke sesuatu yang benar-benar ada sebelum launch. Kalau nanti ada domain
+sendiri, ganti dulu di `token.json`, deploy, baru launch.
 
 Isinya dua bagian: launch-nya seperti yang ditulis di `token.json`, dan apa kata
 chain — dibaca live, dan kosong selama belum diluncurkan. Setelah launch,
