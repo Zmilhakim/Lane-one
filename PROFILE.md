@@ -114,16 +114,18 @@ The first lane through the gate. Supply all in the pool, liquidity locked, a 4% 
 
 ## Website
 
-Its own page, already live:
+```
+https://laneone.lol
+```
 
-```
-https://lane-one-pi.vercel.app
-```
+Registered 2026-09-20 at Vercel and attached to this project, so it serves this
+repository's build and nothing else. `www.laneone.lol` redirects to it.
 
 That is also `imageURI` and `link` in `token.json` — two values that go on chain
-with the notice and cannot be edited afterwards, so both have to point at
-something that actually exists before the launch is sent. If a domain of its own
-comes later: change `token.json`, deploy, then launch, in that order.
+with the notice and cannot be edited afterwards. Both point here, and this is the
+order that keeps them true: change `token.json`, deploy, check the URL actually
+answers, **then** launch. A notice pointing at a page that does not exist yet is
+a notice that points at nothing forever.
 
 Not an explorer page. It looks like a website, it is not one, and it goes stale
 the first time anything is redeployed. The contract address belongs in a post
