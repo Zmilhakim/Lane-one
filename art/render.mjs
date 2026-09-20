@@ -17,7 +17,7 @@ import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 
 import { markSvg } from "./art.mjs";
-import { PALETTE } from "./lib/palette.mjs";
+import { FACES, FONT_CSS, PALETTE } from "./lib/palette.mjs";
 import { readRates } from "./lib/rates.mjs";
 import { ethPerTokenFromSqrtPrice, launchRange, pricePerToken } from "./lib/ticks.mjs";
 import { inlineFonts, shoot } from "./lib/sheets.mjs";
@@ -30,7 +30,7 @@ const root = dirname(here);
 
 const token = JSON.parse(readFileSync(join(root, "token.json"), "utf8"));
 const RATE = readRates(join(root, "launchpad.json"));
-const FONTS = await inlineFonts();
+const FONTS = await inlineFonts(FONT_CSS);
 
 const CHAIN = "ROBINHOOD CHAIN 4663";
 const VENUE = "UNISWAP V4";
@@ -45,42 +45,32 @@ const VENUE = "UNISWAP V4";
  */
 const COPY = {
   en: {
-    ticket: "LAUNCH TICKET",
+    sign: "LAUNCH",
     opening: "Opening tick",
     supply: "Supply",
     intoPool: "Into the pool",
     allOfIt: "All of it",
-    toll: "Toll, both ways",
+    toll: "Toll",
     tollValue: (rate) => `${rate.toll} · ${rate.creator} to the creator`,
     liquidity: "Liquidity",
     locked: "Locked, permanently",
-    chips: (rate) => [`${rate.toll} TOLL`, `${rate.creator} TO THE CREATOR`, "LIQUIDITY LOCKED"],
-    ogChips: (rate) => [`${rate.toll} TOLL, BOTH WAYS`, `${rate.supply} SUPPLY`, "POOL LOCKED"],
-    footer: ["SUPPLY ALL IN THE POOL", "LAUNCHED ON TOOLLPAD"],
-    ogFooter: (rate, opening) => [
-      `OPENING TICK · ${opening} ETH`,
-      `${rate.creator} OF THE TOLL TO THE CREATOR`,
-      "LAUNCHED ON TOOLLPAD",
-    ],
+    strip: (rate) => [`${rate.toll} EACH WAY`, `${rate.creator} TO THE CREATOR`, "POOL LOCKED"],
+    exit: "EXIT",
+    ahead: "LANE OPEN",
   },
   id: {
-    ticket: "TIKET LAUNCH",
+    sign: "LAUNCH",
     opening: "Tick pembukaan",
     supply: "Supply",
     intoPool: "Masuk ke pool",
     allOfIt: "Semuanya",
-    toll: "Toll, dua arah",
+    toll: "Toll",
     tollValue: (rate) => `${rate.toll} · ${rate.creator} buat creator`,
     liquidity: "Likuiditas",
     locked: "Dikunci, permanen",
-    chips: (rate) => [`TOLL ${rate.toll}`, `${rate.creator} BUAT CREATOR`, "LIKUIDITAS DIKUNCI"],
-    ogChips: (rate) => [`TOLL ${rate.toll}, DUA ARAH`, `SUPPLY ${rate.supply}`, "POOL DIKUNCI"],
-    footer: ["SUPPLY SEMUA DI POOL", "DILUNCURKAN LEWAT TOOLLPAD"],
-    ogFooter: (rate, opening) => [
-      `TICK PEMBUKAAN · ${opening} ETH`,
-      `${rate.creator} DARI TOLL BUAT CREATOR`,
-      "DILUNCURKAN LEWAT TOOLLPAD",
-    ],
+    strip: (rate) => [`${rate.toll} DUA ARAH`, `${rate.creator} BUAT CREATOR`, "POOL DIKUNCI"],
+    exit: "EXIT",
+    ahead: "LAJUR DIBUKA",
   },
 };
 
@@ -134,52 +124,57 @@ function refuseIdentityOnArt(name, html, handle) {
 
 const BASE = `
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: "IBM Plex Mono", ui-monospace, monospace; color: ${PALETTE.paper}; }
-  .asphalt {
-    background-color: ${PALETTE.ground};
+  body { font-family: "Overpass", system-ui, sans-serif; color: ${PALETTE.marking}; }
+
+  /* The road the signs stand over: asphalt, with the tooth of worn tarmac. */
+  .road {
+    background-color: ${PALETTE.asphalt};
     background-image:
-      repeating-linear-gradient(135deg, rgb(255 255 255 / .022) 0 2px, transparent 2px 9px),
-      radial-gradient(rgb(255 255 255 / .05) .5px, transparent .5px);
-    background-size: auto, 13px 13px;
+      radial-gradient(rgb(255 255 255 / .045) .6px, transparent .6px),
+      radial-gradient(rgb(0 0 0 / .25) .6px, transparent .6px);
+    background-size: 11px 11px, 17px 17px;
+    background-position: 0 0, 5px 7px;
   }
-  .hazard { height: 14px; background-image: repeating-linear-gradient(135deg, ${PALETTE.signal} 0 14px, ${PALETTE.ink} 14px 28px); }
-  .micro { font-size: 13px; letter-spacing: .18em; text-transform: uppercase; color: ${PALETTE.inkFaint}; }
-  .chip {
-    display: inline-flex; align-items: center; border: 2px solid ${PALETTE.signal};
-    padding: 7px 13px; font-size: 12px; font-weight: 600; letter-spacing: .14em;
-    text-transform: uppercase; color: ${PALETTE.signal};
+
+  /* A guide sign: green panel, rounded, with the white border set in from the
+     edge — the detail that makes a green rectangle read as signage. */
+  .sign {
+    background: ${PALETTE.sign};
+    border-radius: 14px;
+    padding: 7px;
   }
-  .chip.solid { background: ${PALETTE.signal}; color: ${PALETTE.ink}; border-color: ${PALETTE.signal}; }
-  .ticket { border: 3px solid ${PALETTE.signal}; background: ${PALETTE.groundDeep}; }
-  .row { display: flex; justify-content: space-between; gap: 18px; padding: 10px 18px; border-bottom: 1px solid rgb(245 197 24 / .22); font-size: 15px; }
+  .sign > .inner { border: 3px solid ${PALETTE.marking}; border-radius: 8px; height: 100%; }
+
+  .lane-rule {
+    height: 10px;
+    background-image: linear-gradient(90deg, ${PALETTE.marking} 0 58px, transparent 58px 96px);
+    background-size: 96px 10px;
+  }
+
+  .label { font-family: "Overpass Mono", monospace; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: ${PALETTE.markingDim}; }
+  .figure { font-family: "Overpass Mono", monospace; font-weight: 600; }
+  .display { font-weight: 800; letter-spacing: -.02em; }
+
+  .row { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; padding: 9px 20px; border-bottom: 1px solid rgb(247 250 247 / .22); }
   .row:last-child { border-bottom: 0; }
-  .row span { color: ${PALETTE.inkFaint}; }
-  .row b { font-weight: 600; color: ${PALETTE.paper}; }
-  .display { font-family: "Archivo Black", sans-serif; letter-spacing: -.01em; }
+  .row span { font-family: "Overpass Mono", monospace; font-size: 14px; letter-spacing: .04em; color: ${PALETTE.markingDim}; }
+  .row b { font-family: "Overpass Mono", monospace; font-size: 15px; font-weight: 600; color: ${PALETTE.marking}; }
+
+  /* The exit-number badge every guide sign carries in its top corner. */
+  .exit {
+    background: ${PALETTE.orange}; color: ${PALETTE.asphaltDeep};
+    border-radius: 8px; padding: 6px 12px;
+    font-family: "Overpass Mono", monospace; font-weight: 600; font-size: 13px; letter-spacing: .12em;
+  }
 `;
 
-/**
- * The launch, as a ticket.
- *
- * Every line is a fact about the transaction that opens the pool, and every one
- * of them is still true a year later: the opening tick is where the pool was
- * initialised, and the other four are constants in the contracts. Nothing here
- * is a price, a market cap or a holder count — those move, and an image cannot.
- */
-const ticket = (token, width) => {
-  const words = wordsFor(token);
-  return `
-  <div class="ticket" style="width:${width}px">
-    <div style="display:flex;justify-content:space-between;background:${PALETTE.signal};color:${PALETTE.ink};padding:9px 18px;font-size:12px;font-weight:600;letter-spacing:.18em">
-      <span>${words.ticket}</span><span>${VENUE}</span>
-    </div>
-    <div class="row"><span>${words.opening}</span><b>${openingValuation(token).eth} ETH</b></div>
-    <div class="row"><span>${words.supply}</span><b>${RATE.supply}</b></div>
-    <div class="row"><span>${words.intoPool}</span><b>${words.allOfIt}</b></div>
-    <div class="row"><span>${words.toll}</span><b>${words.tollValue(RATE)}</b></div>
-    <div class="row"><span>${words.liquidity}</span><b>${words.locked}</b></div>
-  </div>`;
-};
+/** The launch, as the rows of a guide sign. Every line is true a year later. */
+const signRows = (token, words) => `
+  <div class="row"><span>${words.opening}</span><b>${openingValuation(token).eth} ETH</b></div>
+  <div class="row"><span>${words.supply}</span><b>${RATE.supply}</b></div>
+  <div class="row"><span>${words.intoPool}</span><b>${words.allOfIt}</b></div>
+  <div class="row"><span>${words.toll}</span><b>${words.tollValue(RATE)}</b></div>
+  <div class="row"><span>${words.liquidity}</span><b>${words.locked}</b></div>`;
 
 const bannerSheet = (token, mark) => {
   const words = wordsFor(token);
@@ -187,23 +182,35 @@ const bannerSheet = (token, mark) => {
   body { width: 1500px; height: 500px; overflow: hidden; }
   .sheet { width: 1500px; height: 500px; display: flex; flex-direction: column; }
 </style></head><body>
-  <div class="sheet asphalt">
-    <div class="hazard"></div>
-    <div style="flex:1;display:flex;align-items:center;gap:48px;padding:0 60px">
-      <div style="flex:0 0 auto">${mark(150)}</div>
+  <div class="sheet road">
+    <div style="flex:1;display:flex;align-items:center;gap:46px;padding:0 58px">
+      <div class="sign" style="flex:0 0 auto">
+        <div class="inner" style="padding:18px">${mark(132)}</div>
+      </div>
+
       <div style="flex:1;min-width:0">
-        <h1 class="display" style="font-size:66px;line-height:1;color:${PALETTE.paper}">${token.name}</h1>
-        <div class="micro" style="margin-top:14px;color:${PALETTE.signal};font-weight:600">$${token.symbol} &middot; ${VENUE} &middot; ${CHAIN}</div>
-        <div style="margin-top:14px;font-size:17px;line-height:1.55;color:${PALETTE.inkFaint};max-width:560px">${token.blurb}</div>
-        <div style="margin-top:20px;display:flex;gap:10px">
-          ${words.chips(RATE).map((chip, index) => `<span class="chip${index === 0 ? " solid" : ""}">${chip}</span>`).join("")}
+        <div style="display:flex;align-items:center;gap:14px">
+          <h1 class="display" style="font-size:78px;line-height:.95;color:${PALETTE.marking}">${token.name}</h1>
+          <span class="exit">$${token.symbol}</span>
+        </div>
+        <div class="label" style="margin-top:14px">${VENUE} &middot; ${CHAIN}</div>
+        <div style="margin-top:14px;font-size:19px;line-height:1.5;color:${PALETTE.markingDim};max-width:520px">${token.blurb}</div>
+      </div>
+
+      <div class="sign" style="flex:0 0 auto;width:430px">
+        <div class="inner">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 20px 9px">
+            <span class="label" style="color:${PALETTE.marking};font-weight:600">${words.sign}</span>
+            <span class="label" style="color:${PALETTE.marking}">${words.ahead}</span>
+          </div>
+          <div style="border-top:1px solid rgb(247 250 247 / .35)">${signRows(token, words)}</div>
         </div>
       </div>
-      ${ticket(token, 420)}
     </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 60px;border-top:2px solid rgb(245 197 24 / .3);background:${PALETTE.groundDeep}">
-      <span class="micro" style="color:${PALETTE.signal};font-weight:600">$${token.symbol}</span>
-      ${words.footer.map((line) => `<span class="micro" style="color:${PALETTE.signal};font-weight:600">${line}</span>`).join("")}
+
+    <div class="lane-rule"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 58px;background:${PALETTE.asphaltDeep}">
+      ${words.strip(RATE).map((line) => `<span class="label" style="color:${PALETTE.marking}">${line}</span>`).join("")}
     </div>
   </div>
 </body></html>`;
@@ -212,34 +219,29 @@ const bannerSheet = (token, mark) => {
 const ogSheet = (token, mark) => {
   const words = wordsFor(token);
   return `<!doctype html><html><head><meta charset="utf-8">${FONTS}<style>${BASE}
-  body { width: 1200px; height: 630px; overflow: hidden; background: ${PALETTE.ink}; }
-  .frame { width: 1200px; height: 630px; padding: 42px; }
-  .panel { width: 100%; height: 100%; border: 3px solid ${PALETTE.signal}; display: flex; flex-direction: column; }
+  body { width: 1200px; height: 630px; overflow: hidden; }
+  .frame { width: 1200px; height: 630px; padding: 40px; display: flex; flex-direction: column; gap: 20px; }
 </style></head><body>
-  <div class="frame asphalt">
-    <div class="panel">
-      <div style="display:flex;justify-content:space-between;padding:11px 26px;background:${PALETTE.signal};color:${PALETTE.ink};font-size:12px;font-weight:600;letter-spacing:.18em">
-        <span>${VENUE} &middot; ${CHAIN}</span>
-        <span>$${token.symbol}</span>
-      </div>
-      <div style="flex:1;min-height:0;padding:34px 46px;display:flex;align-items:center;gap:44px">
-        <div style="flex:0 0 auto">${mark(220)}</div>
-        <div style="flex:1;min-width:0">
-          <h1 class="display" style="font-size:62px;line-height:1.05;color:${PALETTE.paper}">${token.name}</h1>
-          <p style="margin-top:16px;font-size:19px;line-height:1.55;color:${PALETTE.inkFaint}">
-            ${token.blurb}
-          </p>
-          <div style="margin-top:22px;display:flex;flex-wrap:wrap;gap:10px">
-            ${words.ogChips(RATE).map((chip, index) => `<span class="chip${index === 0 ? " solid" : ""}">${chip}</span>`).join("")}
+  <div class="frame road">
+    <div class="sign" style="flex:1;min-height:0">
+      <div class="inner" style="display:flex;flex-direction:column;padding:30px 34px">
+        <div style="display:flex;align-items:center;gap:24px">
+          <div style="flex:0 0 auto">${mark(120)}</div>
+          <div style="flex:1;min-width:0">
+            <h1 class="display" style="font-size:72px;line-height:.95;color:${PALETTE.marking}">${token.name}</h1>
+            <div class="label" style="margin-top:10px;color:${PALETTE.marking}">$${token.symbol} &middot; ${VENUE}</div>
           </div>
+          <span class="exit" style="font-size:22px;padding:12px 18px">${RATE.toll}</span>
         </div>
+
+        <p style="margin-top:22px;font-size:22px;line-height:1.45;color:${PALETTE.markingDim}">${token.blurb}</p>
+
+        <div style="margin-top:auto;border-top:1px solid rgb(247 250 247 / .35)">${signRows(token, words)}</div>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 46px;border-top:3px solid ${PALETTE.signal};background:${PALETTE.groundDeep}">
-        ${words
-          .ogFooter(RATE, openingValuation(token).eth)
-          .map((line) => `<span class="micro" style="color:${PALETTE.signal};font-weight:600">${line}</span>`)
-          .join("")}
-      </div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      ${words.strip(RATE).map((line) => `<span class="label" style="color:${PALETTE.markingDim}">${line}</span>`).join("")}
     </div>
   </div>
 </body></html>`;
@@ -257,8 +259,8 @@ writeFileSync(join(out, "mark.svg"), markSvg({ size: 512 }));
 await sharp(Buffer.from(markSvg({ size: 1000 }))).png().toFile(join(out, "avatar-1000.png"));
 
 const sheets = [
-  { name: "banner-1500x500", html: bannerSheet(token, mark), size: { width: 1500, height: 500 }, faces: ["Archivo Black", "IBM Plex Mono"] },
-  { name: "og-1200x630", html: ogSheet(token, mark), size: { width: 1200, height: 630 }, faces: ["Archivo Black", "IBM Plex Mono"] },
+  { name: "banner-1500x500", html: bannerSheet(token, mark), size: { width: 1500, height: 500 }, faces: FACES },
+  { name: "og-1200x630", html: ogSheet(token, mark), size: { width: 1200, height: 630 }, faces: FACES },
 ];
 for (const sheet of sheets) refuseIdentityOnArt(sheet.name, sheet.html, token.profile?.handle);
 

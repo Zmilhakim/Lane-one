@@ -1,16 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo_Black, IBM_Plex_Mono } from "next/font/google";
+import { Overpass, Overpass_Mono } from "next/font/google";
 
 import "./globals.css";
 import { TOKEN } from "@/lib/launchpad";
 import { SITE_URL } from "@/lib/site";
 
-const archivo = Archivo_Black({ weight: "400", subsets: ["latin"], variable: "--font-archivo", display: "swap" });
-
-const plexMono = IBM_Plex_Mono({
-  weight: ["400", "500", "600"],
+// Overpass is Highway Gothic's open-source descendant, which is the whole reason
+// for it: a token named after a lane should be set in the face road signs are.
+const overpass = Overpass({
+  weight: ["400", "600", "800"],
   subsets: ["latin"],
-  variable: "--font-plex-mono",
+  variable: "--font-overpass",
+  display: "swap",
+});
+
+const overpassMono = Overpass_Mono({
+  weight: ["400", "600"],
+  subsets: ["latin"],
+  variable: "--font-overpass-mono",
   display: "swap",
 });
 
@@ -37,16 +44,16 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={TOKEN.language} className={`${archivo.variable} ${plexMono.variable}`}>
+    <html lang={TOKEN.language} className={`${overpass.variable} ${overpassMono.variable}`}>
       <body className="flex min-h-dvh flex-col antialiased">
-        <div className="hazard h-3" />
+        <div className="lane-rule h-2.5" />
         <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6 sm:py-8">{children}</main>
-        <footer className="mt-10 border-t-2 border-signal/30 bg-ground-deep">
-          <div className="hazard h-2.5" />
+        <footer className="mt-10 bg-road-deep">
+          <div className="lane-rule h-2.5" />
           <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-5">
-            <span className="micro font-semibold text-signal">${TOKEN.symbol}</span>
+            <span className="label font-semibold text-orange">${TOKEN.symbol}</span>
             <a
-              className="micro text-lane-soft underline decoration-signal/50 underline-offset-4 hover:text-signal"
+              className="label text-marking-dim underline decoration-orange/50 underline-offset-4 hover:text-orange"
               href="https://github.com/Zmilhakim/lane-one"
               target="_blank"
               rel="noreferrer"

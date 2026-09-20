@@ -40,30 +40,30 @@ export default function Page() {
           alt=""
           width={96}
           height={96}
-          className="size-24 shrink-0 border-2 border-signal/40 bg-ground-lift object-cover"
+          className="size-24 shrink-0 rounded-lg border-[3px] border-marking object-cover"
         />
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <h1 className="font-display text-3xl text-lane">{TOKEN.name}</h1>
-            <span className="micro font-semibold text-signal">${TOKEN.symbol}</span>
-            <Badge tone="signal">{copy.writtenDown}</Badge>
+            <h1 className="font-display text-4xl font-extrabold tracking-tight text-marking">{TOKEN.name}</h1>
+            <span className="label font-semibold text-orange">${TOKEN.symbol}</span>
+            <Badge tone="exit">{copy.writtenDown}</Badge>
           </div>
-          {TOKEN.blurb && <p className="mt-2 text-sm leading-relaxed text-lane-soft">{TOKEN.blurb}</p>}
+          {TOKEN.blurb && <p className="mt-2 text-sm leading-relaxed text-marking-dim">{TOKEN.blurb}</p>}
         </div>
       </header>
 
       <Panel label={copy.ticket}>
-        <dl className="divide-y divide-signal/20">
+        <dl className="divide-y divide-marking/25">
           {rows.map(([label, value, hint]) => (
             <div
               key={label}
               className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-2.5 first:pt-0 last:pb-0"
             >
-              <dt className="micro text-lane-faint">{label}</dt>
-              <dd className="text-right text-sm font-semibold text-lane">
+              <dt className="label text-marking-faint">{label}</dt>
+              <dd className="text-right text-sm font-semibold text-marking">
                 {value}
-                {hint && <span className="mt-0.5 block text-xs font-normal text-lane-faint">{hint}</span>}
+                {hint && <span className="mt-0.5 block text-xs font-normal text-marking-faint">{hint}</span>}
               </dd>
             </div>
           ))}
@@ -80,17 +80,17 @@ export default function Page() {
       <Panel label={copy.theAccount}>
         <dl className="space-y-3 text-sm">
           <div>
-            <dt className="micro text-lane-faint">{copy.displayName}</dt>
-            <dd className="mt-0.5 text-lane">{TOKEN.displayName}</dd>
+            <dt className="label text-marking-faint">{copy.displayName}</dt>
+            <dd className="mt-0.5 text-marking">{TOKEN.displayName}</dd>
           </div>
           <div>
-            <dt className="micro text-lane-faint">{copy.handle}</dt>
-            <dd className="mt-0.5 text-lane">
+            <dt className="label text-marking-faint">{copy.handle}</dt>
+            <dd className="mt-0.5 text-marking">
               {/* A handle nobody has registered is printed as a plan, never as a link:
                   a link to it is an introduction to whoever registers it next. */}
               {TOKEN.handleRegistered ? (
                 <a
-                  className="underline decoration-signal/40 underline-offset-4 hover:text-signal"
+                  className="underline decoration-orange/40 underline-offset-4 hover:text-orange"
                   href={`https://x.com/${TOKEN.handle.replace(/^@/, "")}`}
                   target="_blank"
                   rel="noreferrer"
@@ -99,26 +99,26 @@ export default function Page() {
                 </a>
               ) : (
                 <>
-                  <span className="text-lane-soft">{TOKEN.handle}</span>
-                  <span className="ml-2 text-xs text-lane-faint">{copy.handleUnregistered}</span>
+                  <span className="text-marking-dim">{TOKEN.handle}</span>
+                  <span className="ml-2 text-xs text-marking-faint">{copy.handleUnregistered}</span>
                 </>
               )}
             </dd>
           </div>
           {TOKEN.bio && (
             <div>
-              <dt className="micro text-lane-faint">{copy.bio}</dt>
-              <dd className="mt-0.5 leading-relaxed text-lane-soft">{TOKEN.bio}</dd>
+              <dt className="label text-marking-faint">{copy.bio}</dt>
+              <dd className="mt-0.5 leading-relaxed text-marking-dim">{TOKEN.bio}</dd>
             </div>
           )}
         </dl>
       </Panel>
 
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/banner-1500x500.png" alt="" width={1500} height={500} className="w-full border-2 border-signal/35" />
+      <img src="/banner-1500x500.png" alt="" width={1500} height={500} className="w-full rounded-lg" />
 
-      <p className="micro">
-        <a className="text-lane-faint hover:text-signal" href={LAUNCHPAD.repo} target="_blank" rel="noreferrer">
+      <p className="label">
+        <a className="text-marking-faint hover:text-orange" href={LAUNCHPAD.repo} target="_blank" rel="noreferrer">
           {copy.readMore} ↗
         </a>
       </p>

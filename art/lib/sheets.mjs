@@ -6,6 +6,7 @@ import { mkdirSync, writeFileSync, rmSync, existsSync, readFileSync } from "node
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createRequire } from "node:module";
+import { createHash } from "node:crypto";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
@@ -13,26 +14,30 @@ const { chromium } = require("playwright");
 const brand = dirname(dirname(fileURLToPath(import.meta.url)));
 const fontCache = join(brand, ".fonts");
 
-const CSS_URL = "https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;600&display=swap";
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 
 /**
  * Fetches the webfonts in Node and inlines them as data URIs.
+ *
+ * The URL is passed in rather than fixed here: which typeface a project uses is
+ * part of what makes it that project rather than another one.
  *
  * The headless browser does not inherit this environment's HTTP proxy, so a
  * <link> to Google Fonts silently fetches nothing and every render lands in a
  * fallback face. Node does have the proxy, so it does the fetching; the browser
  * then needs no network at all, which also makes a re-render reproducible.
  */
-export async function inlineFonts() {
+export async function inlineFonts(cssUrl) {
   mkdirSync(fontCache, { recursive: true });
 
-  const cssPath = join(fontCache, "faces.css");
+  // Cached under a name derived from the request, so a project that changes its
+  // typeface fetches the new one rather than being served the old one from disk.
+  const cssPath = join(fontCache, `${createHash("sha1").update(cssUrl).digest("hex").slice(0, 12)}.css`);
   let css;
   if (existsSync(cssPath)) {
     css = readFileSync(cssPath, "utf8");
   } else {
-    const response = await fetch(CSS_URL, { headers: { "User-Agent": UA } });
+    const response = await fetch(cssUrl, { headers: { "User-Agent": UA } });
     if (!response.ok) throw new Error(`could not fetch font css: ${response.status}`);
     css = await response.text();
     writeFileSync(cssPath, css);

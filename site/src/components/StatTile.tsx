@@ -17,12 +17,17 @@ export function StatTile({
   className?: string;
 }) {
   return (
-    <div className={clsx("border-2 border-lane-faint/35 bg-ground-lift px-3 py-2.5", className)}>
-      <div className="micro text-lane-soft">{label}</div>
-      <div className={clsx("mt-1 truncate text-lg font-semibold", value ? "text-lane" : "text-lane-faint")}>
+    <div className={clsx("rounded-lg border border-marking/30 bg-sign-deep px-3 py-2.5", className)}>
+      <div className="label text-marking-dim">{label}</div>
+      <div
+        className={clsx(
+          "mt-1 truncate font-mono text-lg font-semibold",
+          value ? "text-marking" : "text-marking-faint",
+        )}
+      >
         {value ?? "n/a"}
       </div>
-      {hint && <div className="micro mt-0.5 text-lane-faint">{hint}</div>}
+      {hint && <div className="label mt-0.5 text-marking-faint">{hint}</div>}
     </div>
   );
 }

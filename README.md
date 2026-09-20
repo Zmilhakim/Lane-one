@@ -87,6 +87,25 @@ itself. There is no wallet to connect, no database, and no API in between.
 
 Until there is a launch recorded, the second half says so.
 
+## It looks like itself
+
+Toollpad is a boom gate at night — asphalt, signal yellow, hazard stripes,
+Archivo Black. None of that is here. This is the road past the gate as highway
+signage: guide-sign green, a white border set in from the edge, marking white,
+one shout of construction orange, and Overpass — Highway Gothic's open-source
+descendant — for every word.
+
+That is a rule, not a preference. A token wearing its launchpad's palette looks
+like an official product of it, which is a claim nobody made and nobody can
+check; and a board where every token is the same picture in a different colour
+gives a reader nothing to recognise. The launchpad supplies a pool and a rate.
+The look is the token's own, and the next one should take none of this either.
+
+The palette and the typeface are in [`art/lib/palette.mjs`](art/lib/palette.mjs)
+and the site's `globals.css`, in one place each, so changing the identity is one
+edit and not a search. `PROFILE.md` carries the same rule for the writing: what
+the posts sound like, and what they never say.
+
 ## The art
 
 ```bash

@@ -23,6 +23,32 @@ of Toollpad — and the reader who cannot tell them apart is the one it would co
 The mark here is a lane of road: two solid edge lines and a broken centre line,
 drawn on the same twelve-by-twelve grid as the gate and sharing nothing else.
 
+## The look, and why none of it is the launchpad's
+
+Toollpad is a boom gate at night: asphalt, signal yellow, hazard stripes,
+Archivo Black over IBM Plex Mono, sharp-cornered panels with a yellow batten.
+**None of that appears here**, and that is a rule rather than a preference.
+
+A token wearing its launchpad's palette looks like an official product of that
+launchpad — a claim nobody made, nobody checks, and nobody can undo once people
+have seen it. It also makes every token launched there look like the same token
+with a different name, which is the opposite of what a launch needs.
+
+So Lane One is the road past the gate, in daylight, as highway signage:
+
+| | |
+| --- | --- |
+| Ground | Worn asphalt `#23282b` — a dot texture, not the launchpad's diagonal tooth |
+| Panel | Guide-sign green `#0a5c42`, rounded, white border set in from the edge |
+| Paint | Marking white `#f7faf7`, and construction orange `#ff6a13` for the one figure that costs something |
+| Face | Overpass and Overpass Mono — Highway Gothic's open-source descendant |
+| Rule | A dashed centre line, where the launchpad has hazard stripes |
+| Badge | The orange exit tab a guide sign carries in its corner |
+
+The next token launched through Toollpad should take none of this either. Its
+own name, its own palette, its own face, its own motif — the launchpad supplies
+a pool and a rate, not a house style.
+
 ## Ticker
 
 **`$LANE`**. Not `$TOLL`, which is the launchpad's own ticker, and not `$HOOD`,
@@ -146,37 +172,60 @@ anything, and sends nothing without `CONFIRM=launch`.
 
 ## Posts
 
+**The voice is signage, not prose.** The launchpad explains itself in
+paragraphs, because what it is selling is a mechanism people have to understand
+before they trust it. This account is the thing that was launched: short lines,
+figures first, no adjective doing work a number could do. Read each post as
+something painted on a board at the side of a road — a driver has a second and a
+half.
+
+Rules, so a later post does not drift back into the launchpad's voice:
+
+* First line is the sign: two or three words, upper case.
+* One fact per line. Numbers before words.
+* No adjective that cannot be checked — no "huge", no "insane", no "safest".
+* Never a price, a market cap or a holder count. Those move and a post does not.
+* The contract address goes last, or not at all.
+
 **Launch:**
 
-> Lane One ($LANE) is on the Toollpad board. Uniswap v4, paired against native
-> ETH.
+> LANE OPEN
 >
-> A billion supply, all of it in the pool. No presale, no allocation, nothing
-> held back — there is nowhere to hold it.
+> Lane One ($LANE) is on the Toollpad board. Uniswap v4, against native ETH.
 >
-> Every swap pays a 4% toll, both directions. 80% of it goes to whoever launched
-> it.
->
-> The liquidity is locked. Not promised, not timelocked: the locker has no
-> function that takes any out.
+> 1,000,000,000 supply. All of it in the pool.
+> 4% toll each way. 80% of it to whoever launched it.
+> Liquidity locked — the locker has no function that takes any out.
 >
 > Contract: 0x…
 
-**Why the rate cannot be changed later:**
+**On the rate:**
 
-> The rate lives in a Uniswap v4 hook, and a pool's hook is part of its key.
+> NO TOLL BOOTH AHEAD
 >
-> So it is fixed the moment the pool opens. Not governed, not timelocked, not
-> "no plans to change it" — a different hook is a different pool. The rate on the
-> last day is the rate on the first.
-
-**What the creator actually owns:**
-
-> Launch, and you end the transaction holding zero tokens. That is not a catch,
-> it is the point: the supply never passes through anybody's hands, so there is
-> nothing anyone could dump.
+> The rate lives in the pool's hook, and a hook is part of the pool's key.
 >
-> What you own is 80% of the toll, for as long as anyone trades it.
+> Fixed the moment the pool opened. Not governed. Not timelocked. A different
+> rate would be a different pool.
+
+**On what is held back:**
+
+> NOTHING IN RESERVE
+>
+> No presale. No allocation. No unlock schedule.
+>
+> The supply was minted straight into the pool — it never passed through anyone's
+> hands, so there is nothing anybody could sell you out of.
+
+**On the liquidity:**
+
+> ONE WAY
+>
+> Everything paid for the supply becomes liquidity, and liquidity does not come
+> back out. Not for the creator, not for the launchpad, not by vote.
+>
+> The toll comes out. The liquidity does not. Two different promises — worth
+> knowing which is which.
 
 *Image: `art/out/banner-1500x500.png` or `art/out/og-1200x630.png`. Fill the
 contract line in from the launch receipt and check it against the chain first —

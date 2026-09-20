@@ -110,13 +110,13 @@ export function Live({ language, factory, poolManager, onChain }: Props) {
         </Badge>
       }
     >
-      {reading.state === "unlaunched" && <p className="text-sm leading-relaxed text-lane-soft">{copy.notLaunchedBody}</p>}
-      {reading.state === "no-factory" && <p className="text-sm leading-relaxed text-lane-soft">{copy.boardClosed}</p>}
-      {reading.state === "loading" && <p className="text-sm text-lane-faint">{copy.reading}</p>}
-      {reading.state === "mismatch" && <p className="text-sm leading-relaxed text-rust">{copy.mismatch}</p>}
+      {reading.state === "unlaunched" && <p className="text-sm leading-relaxed text-marking-dim">{copy.notLaunchedBody}</p>}
+      {reading.state === "no-factory" && <p className="text-sm leading-relaxed text-marking-dim">{copy.boardClosed}</p>}
+      {reading.state === "loading" && <p className="text-sm text-marking-faint">{copy.reading}</p>}
+      {reading.state === "mismatch" && <p className="text-sm leading-relaxed text-stop">{copy.mismatch}</p>}
       {reading.state === "failed" && (
-        <p className="text-sm leading-relaxed text-rust">
-          {copy.unreachable} <span className="text-lane-faint">{reading.why}</span>
+        <p className="text-sm leading-relaxed text-stop">
+          {copy.unreachable} <span className="text-marking-faint">{reading.why}</span>
         </p>
       )}
 
@@ -130,10 +130,10 @@ export function Live({ language, factory, poolManager, onChain }: Props) {
 
           {bought !== null && (
             <div className="mt-4">
-              <div className="h-1.5 w-full bg-ground-lift">
-                <div className="h-full bg-signal" style={{ width: `${Math.round(bought * 100)}%` }} />
+              <div className="h-1.5 w-full bg-sign-deep">
+                <div className="h-full bg-orange" style={{ width: `${Math.round(bought * 100)}%` }} />
               </div>
-              <p className="micro mt-1 text-lane-faint">
+              <p className="label mt-1 text-marking-faint">
                 {Math.round(bought * 100)}% {copy.bought}
               </p>
             </div>
@@ -141,10 +141,10 @@ export function Live({ language, factory, poolManager, onChain }: Props) {
 
           <dl className="mt-4 space-y-1.5 text-sm">
             <div className="flex flex-wrap gap-x-2">
-              <dt className="micro text-lane-faint">{copy.contract}</dt>
+              <dt className="label text-marking-faint">{copy.contract}</dt>
               <dd>
                 <a
-                  className="text-lane-soft underline decoration-signal/40 underline-offset-4 hover:text-signal"
+                  className="text-marking-dim underline decoration-orange/40 underline-offset-4 hover:text-orange"
                   href={explorerAddress(reading.notice.token)}
                   target="_blank"
                   rel="noreferrer"
@@ -154,14 +154,14 @@ export function Live({ language, factory, poolManager, onChain }: Props) {
               </dd>
             </div>
             <div className="flex flex-wrap gap-x-2">
-              <dt className="micro text-lane-faint">{copy.notice}</dt>
-              <dd className="text-lane-soft">
+              <dt className="label text-marking-faint">{copy.notice}</dt>
+              <dd className="text-marking-dim">
                 #{String(reading.notice.id)}
                 {onChain?.launchTx && (
                   <>
                     {" · "}
                     <a
-                      className="underline decoration-signal/40 underline-offset-4 hover:text-signal"
+                      className="underline decoration-orange/40 underline-offset-4 hover:text-orange"
                       href={explorerTx(onChain.launchTx)}
                       target="_blank"
                       rel="noreferrer"

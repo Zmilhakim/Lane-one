@@ -1,18 +1,24 @@
 import type { ReactNode } from "react";
 import { clsx } from "@/lib/clsx";
 
-type BadgeTone = "live" | "idle" | "signal";
+type BadgeTone = "live" | "idle" | "exit";
 
+/** `exit` is the orange tab every guide sign carries in its corner. */
 const TONES: Record<BadgeTone, string> = {
-  live: "border-go bg-go/15 text-go",
-  idle: "border-lane-faint/60 bg-ground-lift text-lane-soft",
-  signal: "border-signal bg-signal/15 text-signal",
+  live: "border-open/70 bg-open/15 text-open",
+  idle: "border-marking/40 bg-sign-deep text-marking-dim",
+  exit: "border-orange bg-orange text-road-deep",
 };
 
 export function Badge({ tone = "idle", children }: { tone?: BadgeTone; children: ReactNode }) {
   return (
-    <span className={clsx("micro inline-flex items-center gap-1.5 border px-2 py-0.5 font-semibold", TONES[tone])}>
-      {tone === "live" && <span className="size-1.5 shrink-0 rounded-full bg-go" />}
+    <span
+      className={clsx(
+        "label inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 font-semibold",
+        TONES[tone],
+      )}
+    >
+      {tone === "live" && <span className="size-1.5 shrink-0 rounded-full bg-open" />}
       {children}
     </span>
   );

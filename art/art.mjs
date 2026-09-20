@@ -4,12 +4,12 @@
 // pixels for the same reason — no font, no traced artwork, the same handful of
 // numbers at sixteen pixels and at a thousand.
 //
-// It is deliberately *not* the gate. A token launched on Toollpad that wore the
-// launchpad's own mark would be the exact shape of the fake version of Toollpad,
-// and a reader has no way to resolve that disagreement. So the launchpad is the
-// barrier and this is the road through it: two solid edge lines and a broken
-// centre line, which is the one arrangement of four marks everybody already
-// reads as a lane.
+// It is deliberately *not* the gate, and it is not drawn in the gate's colours
+// either. A token wearing its launchpad's mark or palette looks like an official
+// product of that launchpad, which is a claim nobody made — so the launchpad is
+// a barrier on asphalt and this is a lane on a guide sign: two solid edge lines
+// and a broken centre line, the one arrangement of four marks everybody already
+// reads as a road.
 import { paint } from "./lib/pixels.mjs";
 
 /** The two edge lines, unbroken — the sides of the lane. */
@@ -38,10 +38,12 @@ const EDGES = [
  */
 const CENTRE = Array.from({ length: 12 }, (_, y) => (y % 4 === 3 ? "............" : ".....##....."));
 
+import { PALETTE } from "./lib/palette.mjs";
+
 export const COLOURS = {
-  ground: "#161a21", // asphalt, the same as the launchpad's
-  edge: "#eef1f6", // road marking white
-  centre: "#f5c518", // the yellow every barrier and centre line is painted
+  ground: PALETTE.sign, // a guide sign, not the launchpad's asphalt
+  edge: PALETTE.marking, // sign white, the colour a lane is painted in
+  centre: PALETTE.orange, // and one line that shouts
 };
 
 /**

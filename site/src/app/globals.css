@@ -1,33 +1,33 @@
 @import "tailwindcss";
 
+/* Lane One's own system, and it is nobody else's.
+   Toollpad is a boom gate at night — asphalt, signal yellow, hazard stripes.
+   This is the road past it: a highway guide sign. Green panel, white border,
+   white type, one shout of construction orange. A token that wears its
+   launchpad's palette looks like an official product of it, which is a claim
+   nobody made and nobody can check. */
+
 @theme {
-  /* The ground: asphalt, at night. */
-  --color-ground: #161a21;
-  --color-ground-deep: #0b0e13;
-  --color-ground-soft: #1e232c;
-  --color-ground-lift: #262c37;
+  /* The road, which is the page. */
+  --color-road: #23282b;
+  --color-road-deep: #171b1d;
+  --color-road-lift: #2d3336;
 
-  /* Signal: the yellow every barrier in the world is painted. The one colour
-     allowed to shout, and the only one that means "this costs something". */
-  --color-signal: #f5c518;
-  --color-signal-deep: #c79a04;
+  /* The sign the figures are printed on. */
+  --color-sign: #0a5c42;
+  --color-sign-deep: #063c2c;
 
-  /* Paper and ink, for the few surfaces that are light. */
-  --color-paper: #f2efe6;
-  --color-paper-dim: #e4dfd0;
-  --color-ink: #14171d;
-  --color-ink-soft: #5b626e;
+  /* Paint: the white a lane is marked in, and the orange that shouts. */
+  --color-marking: #f7faf7;
+  --color-marking-dim: #b9cec4;
+  --color-marking-faint: #7f978c;
+  --color-orange: #ff6a13;
 
-  /* On the dark ground, "ink" would be invisible — these are the text tones. */
-  --color-lane: #eef1f6;
-  --color-lane-soft: #98a1af;
-  --color-lane-faint: #6b7483;
+  --color-open: #62d59a;
+  --color-stop: #e0603a;
 
-  --color-rust: #c4552c;
-  --color-go: #4fb477;
-
-  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  --font-display: var(--font-overpass), system-ui, sans-serif;
+  --font-mono: var(--font-overpass-mono), ui-monospace, "SF Mono", Menlo, monospace;
 }
 
 @layer base {
@@ -36,72 +36,52 @@
   }
 
   body {
-    background-color: var(--color-ground);
-    /* The same faint diagonal tooth the banner is printed on. */
-    background-image: repeating-linear-gradient(
-      135deg,
-      rgb(255 255 255 / 0.022) 0px,
-      rgb(255 255 255 / 0.022) 2px,
-      transparent 2px,
-      transparent 9px
-    );
-    color: var(--color-lane);
-    font-family: var(--font-mono);
+    background-color: var(--color-road);
+    /* Worn tarmac rather than a diagonal tooth: the same trick, a different road. */
+    background-image:
+      radial-gradient(rgb(255 255 255 / 0.045) 0.6px, transparent 0.6px),
+      radial-gradient(rgb(0 0 0 / 0.25) 0.6px, transparent 0.6px);
+    background-size: 11px 11px, 17px 17px;
+    background-position: 0 0, 5px 7px;
+    color: var(--color-marking);
+    font-family: var(--font-display);
     margin: 0;
   }
 
   ::selection {
-    background-color: var(--color-signal);
-    color: var(--color-ink);
+    background-color: var(--color-orange);
+    color: var(--color-road-deep);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-signal);
+    outline: 2px solid var(--color-orange);
     outline-offset: 2px;
   }
 }
 
-@utility hazard {
-  /* The barrier arm, as a rule across the top of something. */
-  background-image: repeating-linear-gradient(
-    135deg,
-    var(--color-signal) 0px,
-    var(--color-signal) 10px,
-    var(--color-ink) 10px,
-    var(--color-ink) 20px
+/* Lane markings, as a rule across something — the dashes of a centre line. */
+@utility lane-rule {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-marking) 0 58px,
+    transparent 58px 96px
   );
+  background-size: 96px 10px;
 }
 
-@utility micro {
+/* Small caps in the mono face: every label on a sign is set this way. */
+@utility label {
+  font-family: var(--font-mono);
   font-size: 0.6875rem;
   line-height: 1.1rem;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
 }
 
-@utility drop {
-  box-shadow: 4px 4px 0 0 var(--color-ground-deep);
-}
-
-@utility drop-sm {
-  box-shadow: 2px 2px 0 0 var(--color-ground-deep);
-}
-
-@keyframes drift {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-@utility drifting {
-  animation: drift 42s linear infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .drifting {
-    animation: none;
-  }
+/* A guide sign: rounded, green, with its white border set in from the edge —
+   the one detail that makes a green rectangle read as signage. */
+@utility sign-panel {
+  background: var(--color-sign);
+  border-radius: 14px;
+  padding: 7px;
 }
