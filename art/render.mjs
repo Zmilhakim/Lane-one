@@ -11,7 +11,7 @@
 // records the commit they were copied from. The check that matters happens on
 // the page instead: it reads the live rate off the chain, and a figure that has
 // drifted shows up there rather than being asserted here.
-import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
@@ -30,6 +30,7 @@ const root = dirname(here);
 
 const token = JSON.parse(readFileSync(join(root, "token.json"), "utf8"));
 const RATE = readRates(join(root, "launchpad.json"));
+const LAUNCHPAD = { ...JSON.parse(readFileSync(join(root, "launchpad.json"), "utf8")).deployed, deployer: "0xDD6eC911F99C5C468632570e028023B875065453" };
 const FONTS = await inlineFonts(FONT_CSS);
 
 const CHAIN = "ROBINHOOD CHAIN 4663";
@@ -52,8 +53,15 @@ const COPY = {
     allOfIt: "All of it",
     toll: "Toll",
     tollValue: (rate) => `${rate.toll} · ${rate.creator} to the creator`,
+    bothWays: "both ways",
+    split: "Split",
+    splitValue: (rate) => `${rate.creator} creator, ${rate.treasury} treasury`,
+    poolFee: "Pool fee",
+    zero: "Zero",
     liquidity: "Liquidity",
     locked: "Locked, permanently",
+    heldBack: "Held back",
+    nothing: "None of it",
     strip: (rate) => [`${rate.toll} EACH WAY`, `${rate.creator} TO THE CREATOR`, "POOL LOCKED"],
     exit: "EXIT",
     ahead: "LANE OPEN",
@@ -66,8 +74,15 @@ const COPY = {
     allOfIt: "Semuanya",
     toll: "Toll",
     tollValue: (rate) => `${rate.toll} · ${rate.creator} buat creator`,
+    bothWays: "dua arah",
+    split: "Bagian",
+    splitValue: (rate) => `${rate.creator} creator, ${rate.treasury} treasury`,
+    poolFee: "Fee pool",
+    zero: "Nol",
     liquidity: "Likuiditas",
     locked: "Dikunci, permanen",
+    heldBack: "Ditahan",
+    nothing: "Tidak ada",
     strip: (rate) => [`${rate.toll} DUA ARAH`, `${rate.creator} BUAT CREATOR`, "POOL DIKUNCI"],
     exit: "EXIT",
     ahead: "LAJUR DIBUKA",
@@ -260,6 +275,102 @@ const ogSheet = (token, mark) => {
 </body></html>`;
 };
 
+/**
+ * The card a launch post carries.
+ *
+ * Every line on it is a fact about one transaction, and stays true a year
+ * later: the opening tick is where the pool was initialised and the rest are
+ * constants in the contracts. No price, no market cap, no holder count — those
+ * move, and an image cannot.
+ */
+const launchCard = (token, mark) => {
+  const words = wordsFor(token);
+  return `<!doctype html><html><head><meta charset="utf-8">${FONTS}<style>${BASE}
+  body { width: 1600px; height: 900px; overflow: hidden; }
+  .frame { width: 1600px; height: 900px; padding: 46px; display: flex; flex-direction: column; gap: 22px; }
+  .big span { font-size: 22px; }
+  .big b { font-size: 26px; }
+  .big { padding: 15px 26px; }
+</style></head><body>
+  <div class="frame road">
+    <div class="sign" style="flex:1;min-height:0">
+      <div class="inner" style="display:flex;flex-direction:column;padding:34px 40px">
+        <div style="display:flex;align-items:center;gap:30px">
+          <div style="flex:0 0 auto">${mark(148)}</div>
+          <div style="flex:1;min-width:0">
+            <h1 class="display" style="font-size:94px;line-height:.92;color:${PALETTE.marking}">${token.name}</h1>
+            <div class="label" style="margin-top:12px;font-size:16px;color:${PALETTE.marking}">$${token.symbol} &middot; ${VENUE} &middot; ${CHAIN}</div>
+          </div>
+          <span class="exit" style="font-size:30px;padding:14px 22px">${RATE.toll}</span>
+        </div>
+
+        <div style="margin-top:24px;flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-between;border-top:1px solid rgb(247 250 247 / .35)">
+          <div class="row big"><span>${words.opening}</span><b>${openingValuation(token).eth} ETH</b></div>
+          <div class="row big"><span>${words.supply}</span><b>${RATE.supply}</b></div>
+          <div class="row big"><span>${words.intoPool}</span><b>${words.allOfIt}</b></div>
+          <div class="row big"><span>${words.toll}</span><b>${RATE.toll} &middot; ${words.bothWays}</b></div>
+          <div class="row big"><span>${words.split}</span><b>${words.splitValue(RATE)}</b></div>
+          <div class="row big"><span>${words.poolFee}</span><b>${words.zero}</b></div>
+          <div class="row big"><span>${words.liquidity}</span><b>${words.locked}</b></div>
+          <div class="row big"><span>${words.heldBack}</span><b>${words.nothing}</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lane-rule" style="height:12px"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      ${words.strip(RATE).map((line) => `<span class="label" style="font-size:15px;color:${PALETTE.markingDim}">${line}</span>`).join("")}
+    </div>
+  </div>
+</body></html>`;
+};
+
+/**
+ * The card that carries the addresses, rendered only once there are addresses.
+ *
+ * A card with a contract address on it is the one thing a reader can check and
+ * nobody can alter by quoting it back differently — which only holds if the card
+ * cannot print an address this token does not have. So it is built from the
+ * `deployed` block the launch wrote, and skipped entirely until there is one.
+ */
+const addressCard = (token, mark) => `<!doctype html><html><head><meta charset="utf-8">${FONTS}<style>${BASE}
+  body { width: 1600px; height: 900px; overflow: hidden; }
+  .frame { width: 1600px; height: 900px; padding: 46px; display: flex; flex-direction: column; gap: 22px; }
+  .what { font-family: "Overpass Mono", monospace; font-size: 16px; letter-spacing: .14em; text-transform: uppercase; color: ${PALETTE.markingDim}; }
+  .hex { font-family: "Overpass Mono", monospace; font-size: 27px; font-weight: 600; color: ${PALETTE.marking}; margin-top: 4px; }
+  .addr { padding: 15px 0; border-bottom: 1px solid rgb(247 250 247 / .22); }
+  .addr:last-child { border-bottom: 0; }
+</style></head><body>
+  <div class="frame road">
+    <div class="sign" style="flex:1;min-height:0">
+      <div class="inner" style="display:flex;flex-direction:column;padding:32px 40px">
+        <div style="display:flex;align-items:center;gap:26px">
+          <div style="flex:0 0 auto">${mark(96)}</div>
+          <div style="flex:1;min-width:0">
+            <h1 class="display" style="font-size:56px;line-height:1;color:${PALETTE.marking}">${token.name}</h1>
+            <div class="label" style="margin-top:8px;font-size:15px;color:${PALETTE.marking}">$${token.symbol} &middot; ${CHAIN}</div>
+          </div>
+          <span class="exit" style="font-size:20px;padding:12px 18px">CHECK THE ADDRESS</span>
+        </div>
+
+        <div style="margin-top:22px;border-top:1px solid rgb(247 250 247 / .35)">
+          <div class="addr"><div class="what">Token</div><div class="hex">${token.deployed.token}</div></div>
+          <div class="addr"><div class="what">Factory &mdash; the board it is on</div><div class="hex">${LAUNCHPAD.factory}</div></div>
+          <div class="addr"><div class="what">Hook &mdash; charges the toll</div><div class="hex">${LAUNCHPAD.hook}</div></div>
+          <div class="addr"><div class="what">Locker &mdash; holds the liquidity, has no way out</div><div class="hex">${LAUNCHPAD.locker}</div></div>
+          <div class="addr"><div class="what">Opened from</div><div class="hex">${LAUNCHPAD.deployer}</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lane-rule" style="height:12px"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span class="label" style="font-size:15px;color:${PALETTE.markingDim}">NOTICE #${token.deployed.notice}</span>
+      <span class="label" style="font-size:15px;color:${PALETTE.markingDim}">A LANE FROM ANY OTHER ADDRESS IS NOT THIS ONE</span>
+    </div>
+  </div>
+</body></html>`;
+
 const out = join(here, "out");
 mkdirSync(out, { recursive: true });
 
@@ -274,7 +385,18 @@ await sharp(Buffer.from(markSvg({ size: 1000 }))).png().toFile(join(out, "avatar
 const sheets = [
   { name: "banner-1500x500", html: bannerSheet(token, mark), size: { width: 1500, height: 500 }, faces: FACES },
   { name: "og-1200x630", html: ogSheet(token, mark), size: { width: 1200, height: 630 }, faces: FACES },
+  { name: "launch-1600x900", html: launchCard(token, mark), size: { width: 1600, height: 900 }, faces: FACES },
 ];
+
+// The addresses only go on a card once they exist. Until the launch writes them
+// back into token.json there is nothing to print, and a stale card is removed
+// rather than left in out/ looking current.
+if (token.deployed?.token && LAUNCHPAD.factory) {
+  sheets.push({ name: "addresses-1600x900", html: addressCard(token, mark), size: { width: 1600, height: 900 }, faces: FACES });
+} else {
+  rmSync(join(out, "addresses-1600x900.png"), { force: true });
+  console.log("not launched yet, so the card that carries the addresses is not rendered");
+}
 for (const sheet of sheets) refuseIdentityOnArt(sheet.name, sheet.html, token.profile?.handle);
 
 await shoot(sheets, out);

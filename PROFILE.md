@@ -138,11 +138,25 @@ chain itself.
 
 ## Images
 
-| Field | File | Size |
+| What | File | Size |
 | --- | --- | --- |
 | Profile picture | `art/out/avatar-1000.png` | 1000 × 1000 |
 | Header | `art/out/banner-1500x500.png` | 1500 × 500 |
 | Link preview | `art/out/og-1200x630.png` | 1200 × 630 |
+| The launch post | `art/out/launch-1600x900.png` | 1600 × 900 |
+| Any post about the address | `art/out/addresses-1600x900.png` | 1600 × 900 |
+
+A header and a picture in a timeline are two different jobs, so they are two
+different files. The launch card carries eight facts and not one of them moves:
+the opening tick is where the pool was initialised, and the rest are constants
+in the contracts.
+
+The address card is rendered **only once there is an address** — it is built
+from the `deployed` block the launch writes back into `token.json`, and until
+then the renderer skips it and deletes any stale copy. A card carrying a
+contract address is the one thing a reader can check and nobody can alter by
+quoting it back differently, which only holds if the card cannot print an
+address this token does not have.
 
 The avatar is full-bleed: the lines of the lane run off all four edges, so X's
 circular crop takes road rather than taking the corners off a picture of road.
