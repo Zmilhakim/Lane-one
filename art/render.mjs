@@ -113,8 +113,21 @@ function openingValuation(token) {
  * remembered — see brand/X-PROFILE.md for the incident that made it a rule.
  */
 function refuseIdentityOnArt(name, html, handle) {
-  const art = html.split(FONTS).join(""); // the inlined fonts are not the picture
-  const found = [handle, ...(art.match(/\b[a-z0-9-]+\.(?:fun|com|xyz|io|app|eth)\b/gi) ?? [])].filter(
+  // What a reader sees, which is what the rule is about: the inlined fonts, the
+  // stylesheet and every tag come out first. Markup carries domains of its own —
+  // an SVG names `w3.org` in its xmlns — and none of them are printed.
+  const art = html
+    .split(FONTS)
+    .join("")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]*>/g, " ");
+
+  // Any domain, rather than a list of the ones thought of in advance. The list
+  // used to name six endings, and this project's own is `.lol`, which was not
+  // one of them — a rule that catches only what someone remembered is the rule
+  // that let TOOLLPAD.FUN onto a card. Decimals are safe: digits after the dot
+  // do not match, so 1.7234 is a number and laneone.lol is a domain.
+  const found = [handle, ...(art.match(/\b[a-z][a-z0-9-]+\.[a-z]{2,24}\b/gi) ?? [])].filter(
     (needle) => needle && art.includes(needle),
   );
   if (found.length > 0) {

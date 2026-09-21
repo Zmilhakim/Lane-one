@@ -35,11 +35,15 @@ export const metadata: Metadata = {
     images: [{ url: "/og-1200x630.png", width: 1200, height: 630, alt: TOKEN.name }],
   },
   twitter: { card: "summary_large_image", title, description: TOKEN.blurb, images: ["/og-1200x630.png"] },
-  icons: { icon: "/avatar-1000.png" },
+  // The icon is `app/icon.svg` — the mark itself, a few hundred bytes. It used
+  // to be the 1000px avatar, which is a picture where an icon goes.
 };
 
 export const viewport: Viewport = {
-  themeColor: "#161a21",
+  // The road this site is printed on. It was the launchpad's asphalt until now,
+  // which is the sort of thing that survives a redesign by being in a field
+  // nobody looks at.
+  themeColor: "#23282b",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
