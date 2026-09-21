@@ -122,9 +122,11 @@ It is deliberately **not** Toollpad's gate. A token wearing the launchpad's own
 mark is the exact shape of the fake version of that launchpad, and the reader who
 cannot tell them apart is the one it would cost.
 
-**No handle and no domain on any image.** `@laneone` is a proposal and nothing
-here has registered it, so nothing here prints it — the renderer checks each
-sheet and throws rather than trusting anyone to remember.
+**No handle and no domain on any image.** Not because `@getlaneone` is unclaimed
+— it is registered — but because X prints the handle in its own chrome above
+every banner, so an image repeating it is one more copy to go stale the day the
+account is renamed. The renderer checks each sheet and throws rather than
+trusting anyone to remember.
 
 ## About the figures on the art
 

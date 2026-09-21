@@ -67,14 +67,18 @@ Alternatives: `Lane One` (8) · `Lane One — 4% toll, 80% yours` (29)
 
 ## Handle
 
-**`@laneone` is a proposal, not a registration.** Nothing here has claimed it, so
-nothing here prints it as if it had — not the banner, not the avatar, not the
-link preview, and the renderer refuses rather than trusting anyone to remember.
+**`@getlaneone`** — registered 2026-09-21.
 
-Register it first, then fill in `profile.handle` and `link` in `token.json` and
-re-render. If it is taken: `@lane_one`, then `@onelanetoken`. Whichever one is
-registered is the only one ever written down here — a handle with two spellings
-in circulation is a handle somebody else can be.
+`@laneone` was the proposal and it was taken, so the account carries the `get`
+prefix and this file carries the registered spelling and no other. A handle with
+two spellings in circulation is a handle somebody else can be: if a post, an
+image or a page ever says `@laneone`, it is not this account.
+
+It still appears on no image. That is not about whether it is registered — X
+prints the handle in its own chrome above every banner, so an image repeating it
+is one more copy to go stale the day the account is renamed, and the renderer
+throws rather than trusting anyone to remember. The page is where it is written,
+and the page reads it from `token.json`.
 
 ## Bio — max 160
 
