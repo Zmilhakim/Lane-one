@@ -66,9 +66,10 @@ the only way the page knows which notice on the board is this token. It never
 matches on the ticker: a ticker is not an identity, and anybody can launch
 another token calling itself the same thing.
 
-**Toollpad's 4% contracts are not deployed yet**, so `launchpad.json` has no
-addresses under `deployed` and nothing here has been launched. Both files say so
-rather than filling in a placeholder.
+The launchpad is on chain — factory `0xA5d97e5E…03aee5F9A`, and
+`launchpad.json` names all three contracts — but **nothing here has been
+launched yet**, so `token.json` has no `deployed` block and the page says so
+rather than filling one in.
 
 ## The page
 

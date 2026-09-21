@@ -13,8 +13,8 @@
     "supply": "1000000000"
   },
   "deployed": {
-    "factory": "",
-    "hook": "",
-    "locker": ""
+    "factory": "0xA5d97e5E1ceBfb35c5dBE23e0514cCA03aee5F9A",
+    "hook": "0x1C946F2C98D91087dF5CD2415550294FBbda60CC",
+    "locker": "0x9a271a0A8CA6F8eE56DE3cE990bD44ee35332D3c"
   }
 }
