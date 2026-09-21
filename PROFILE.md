@@ -191,50 +191,76 @@ Rules, so a later post does not drift back into the launchpad's voice:
 * One fact per line. Numbers before words.
 * No adjective that cannot be checked — no "huge", no "insane", no "safest".
 * Never a price, a market cap or a holder count. Those move and a post does not.
-* The contract address goes last, or not at all.
+* **Every post ends on the deployer**, `0xDD6eC911F99C5C468632570e028023B875065453`,
+  worked into the sentence rather than tacked on as a label. It is the one line
+  a reader can check without trusting the account: a lane that did not come from
+  that address is not this lane. It is also the reason the closing line is never
+  a call to action — the last thing on the board should be the thing that is
+  verifiable, not the thing that is wanted.
 
-**Launch:**
+Counts are measured, and all five fit in 280 without cutting.
+
+### Launch (279)
 
 > LANE OPEN
 >
-> Lane One ($LANE) is on the Toollpad board. Uniswap v4, against native ETH.
+> Lane One — $LANE. Uniswap v4, native ETH.
 >
-> 1,000,000,000 supply. All of it in the pool.
-> 4% toll each way. 80% of it to whoever launched it.
-> Liquidity locked — the locker has no function that takes any out.
+> 1,000,000,000 supply, all of it in the pool.
+> 4% toll each way, 80% to the creator.
+> Liquidity locked — the locker has no way out.
 >
-> Contract: 0x…
+> CA: 0x…
+>
+> Opened from 0xDD6eC911F99C5C468632570e028023B875065453. No other address is this lane.
 
-**On the rate:**
+*Fill `CA:` from the launch receipt, and check it against the board before
+posting — `npm run status` in the launchpad's `contracts/` prints what the pool
+manager actually holds. A contract address in a post is the one thing a reader
+cannot verify by reading the post.*
+
+*Image: `art/out/banner-1500x500.png` or `art/out/og-1200x630.png`.*
+
+### When somebody asks for the CA (217)
+
+The standing reply. Post it once under the launch, and again whenever a reply
+guy starts handing out addresses.
+
+> CHECK THE ADDRESS
+>
+> Don't take a CA from a reply. Mine included.
+>
+> laneone.lol reads the board off the factory. Anything not on it isn't this.
+>
+> Every real $LANE traces back to 0xDD6eC911F99C5C468632570e028023B875065453.
+
+### On the rate (261)
 
 > NO TOLL BOOTH AHEAD
 >
-> The rate lives in the pool's hook, and a hook is part of the pool's key.
+> The rate sits in the pool's hook, and a hook is part of the pool's key.
 >
-> Fixed the moment the pool opened. Not governed. Not timelocked. A different
-> rate would be a different pool.
+> Fixed when the pool opened. Not governed, not timelocked — a different rate would be a different pool.
+>
+> 4% each way, 80% to 0xDD6eC911F99C5C468632570e028023B875065453.
 
-**On what is held back:**
+### On what is held back (273)
 
 > NOTHING IN RESERVE
 >
-> No presale. No allocation. No unlock schedule.
+> No presale. No allocation. No unlock.
 >
-> The supply was minted straight into the pool — it never passed through anyone's
-> hands, so there is nothing anybody could sell you out of.
+> The supply went straight into the pool. It never passed through anyone's hands, so there is nothing anybody can sell you out of — not even 0xDD6eC911F99C5C468632570e028023B875065453, which opened it and holds none.
 
-**On the liquidity:**
+### On the liquidity (275)
+
+The one worth posting before anybody asks, because it is the part that costs
+the creator too.
 
 > ONE WAY
 >
-> Everything paid for the supply becomes liquidity, and liquidity does not come
-> back out. Not for the creator, not for the launchpad, not by vote.
+> Everything paid for the supply becomes liquidity, and liquidity does not come back out. Not for me, not by vote.
 >
-> The toll comes out. The liquidity does not. Two different promises — worth
-> knowing which is which.
-
-*Image: `art/out/banner-1500x500.png` or `art/out/og-1200x630.png`. Fill the
-contract line in from the launch receipt and check it against the chain first —
-`npm run status` in Toollpad's `contracts/` prints what the pool manager actually
-has. A contract address in a post is the one thing readers cannot verify by
-reading the post.*
+> The toll comes out. The liquidity does not. Two different promises.
+>
+> Read the locker yourself — 0xDD6eC911F99C5C468632570e028023B875065453 can't either.
